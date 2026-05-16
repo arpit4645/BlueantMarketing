@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-navy: #0D1B3E;
+  --color-navy-2: #1A2B52;
+  --color-navy-3: #253668;
+  --color-off-white: #F5F4F0;
+  --color-cream: #EEECE6;
+  --color-ink: #0A0A0A;
+  --color-muted: #525252;
+  --color-blue-accent: #4A90D9;
+}
+
+@layer base {
+  body {
+    @apply bg-off-white text-ink font-sans selection:bg-blue-accent/30 antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-black uppercase tracking-[-0.03em] text-navy;
+  }
+
+  /* Custom heading italic style */
+  .heading-italic {
+    @apply italic text-white/60 font-black;
+  }
+
+  /* Geometric Balance Signature Borders */
+  .brochure-card {
+    @apply relative border-l-[5px] border-white/20;
+  }
+
+  .section-border {
+    @apply border-l border-gray-200;
+  }
+}
+
+@layer utilities {
+  .text-clamp-hero {
+    font-size: clamp(52px, 5.5vw, 90px);
+    line-height: 0.88;
+  }
+  
+  .text-clamp-section {
+    font-size: clamp(38px, 4.5vw, 64px);
+    line-height: 0.9;
+  }
+
+  .glass-nav {
+    @apply bg-white/80 backdrop-blur-md border-b border-gray-200;
+  }
+
+  .btn-geometric {
+    @apply text-xs font-bold uppercase tracking-widest px-8 py-4 transition-all duration-300;
+  }
+}

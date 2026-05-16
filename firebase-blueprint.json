@@ -1,0 +1,151 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "A case study or work project",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "cat": { "type": "string" },
+        "tags": { "type": "string" },
+        "year": { "type": "string" },
+        "img": { "type": "string" },
+        "order": { "type": "number" }
+      },
+      "required": ["name", "cat", "img"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "A service offered by the agency",
+      "type": "object",
+      "properties": {
+        "num": { "type": "string" },
+        "title": { "type": "string" },
+        "desc": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "order": { "type": "number" }
+      },
+      "required": ["title", "num"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "User feedback",
+      "type": "object",
+      "properties": {
+        "quote": { "type": "string" },
+        "author": { "type": "string" },
+        "role": { "type": "string" },
+        "company": { "type": "string" },
+        "img": { "type": "string" }
+      },
+      "required": ["quote", "author"]
+    },
+    "SiteSettings": {
+      "title": "Site Settings",
+      "description": "Global website configuration",
+      "type": "object",
+      "properties": {
+        "heroHeadline": { "type": "string" },
+        "heroSubheadline": { "type": "string" },
+        "heroVideoUrl": { "type": "string" },
+        "aboutQuote": { "type": "string" },
+        "aboutText": { "type": "string" },
+        "aboutCombines": { "type": "array", "items": { "type": "string" } },
+        "problemHeadline": { "type": "string" },
+        "problemSub": { "type": "string" },
+        "problemPills": { "type": "array", "items": { "type": "string" } },
+        "problemSmallPills": { "type": "array", "items": { "type": "string" } },
+        "strategyHeadline": { "type": "string" },
+        "visionStatement": { "type": "string" },
+        "missionStatement": { "type": "string" },
+        "finalCtaHeadline": { "type": "string" },
+        "finalCtaSub": { "type": "string" },
+        "finalCtaButton": { "type": "string" },
+        "contactEmail": { "type": "string" },
+        "contactPhone": { "type": "string" },
+        "socialLinks": { 
+          "type": "object",
+          "properties": {
+            "instagram": { "type": "string" },
+            "linkedin": { "type": "string" },
+            "twitter": { "type": "string" }
+          }
+        },
+        "availability": { "type": "string" },
+        "footerCopyright": { "type": "string" }
+      }
+    },
+    "Blog": {
+      "title": "Blog",
+      "description": "A blog post",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "content": { "type": "string" },
+        "author": { "type": "string" },
+        "date": { "type": "string" },
+        "img": { "type": "string" },
+        "slug": { "type": "string" }
+      },
+      "required": ["title", "content", "slug"]
+    },
+    "Lead": {
+      "title": "Lead",
+      "description": "Contact form submission",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "service": { "type": "string" },
+        "budget": { "type": "string" },
+        "message": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["new", "contacted", "archived"] }
+      },
+      "required": ["name", "email"]
+    },
+    "Result": {
+      "title": "Result",
+      "description": "Outcome or achievement",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "desc": { "type": "string" },
+        "img": { "type": "string" },
+        "order": { "type": "number" }
+      },
+      "required": ["title", "desc"]
+    }
+  },
+  "firestore": {
+    "projects": {
+      "schema": { "$ref": "#/entities/Project" },
+      "description": "Collection of projects for the work gallery"
+    },
+    "services": {
+      "schema": { "$ref": "#/entities/Service" },
+      "description": "Collection of services offered"
+    },
+    "testimonials": {
+      "schema": { "$ref": "#/entities/Testimonial" },
+      "description": "Collection of client testimonials"
+    },
+    "leads": {
+      "schema": { "$ref": "#/entities/Lead" },
+      "description": "Collection of form submissions"
+    },
+    "blogs": {
+      "schema": { "$ref": "#/entities/Blog" },
+      "description": "Collection of blog posts"
+    },
+    "results": {
+      "schema": { "$ref": "#/entities/Result" },
+      "description": "Collection of expected results or outcomes"
+    },
+    "settings/global": {
+      "schema": { "$ref": "#/entities/SiteSettings" },
+      "description": "Global site configuration settings"
+    }
+  }
+}

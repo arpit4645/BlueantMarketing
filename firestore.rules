@@ -1,0 +1,130 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedAdmin() {
+      return isSignedIn() && 
+             request.auth.token.email == 'arpitjadav765@gmail.com' && 
+             request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Test Connection ---
+    match /test/connection {
+      allow read: if true;
+    }
+
+    // --- Projects ---
+    match /projects/{projectId} {
+      allow read: if true;
+      allow create, update: if isVerifiedAdmin() && isValidId(projectId) && isValidProject(incoming());
+      allow delete: if isVerifiedAdmin();
+    }
+
+    function isValidProject(p) {
+      return p.name is string && p.name.size() > 0 && p.name.size() < 200 &&
+             p.cat is string && p.img is string &&
+             (p.get('order', 0) is number);
+    }
+
+    // --- Users ---
+    match /users/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow write: if isVerifiedAdmin();
+    }
+
+    // --- Services ---
+    match /services/{serviceId} {
+      allow read: if true;
+      allow create, update: if isVerifiedAdmin() && isValidId(serviceId) && isValidService(incoming());
+      allow delete: if isVerifiedAdmin();
+    }
+
+    function isValidService(s) {
+      return s.title is string && s.title.size() > 0 &&
+             s.num is string &&
+             (s.get('order', 0) is number);
+    }
+
+    // --- Blogs ---
+    match /blogs/{blogId} {
+      allow read: if true;
+      allow create, update: if isVerifiedAdmin() && isValidId(blogId) && isValidBlog(incoming());
+      allow delete: if isVerifiedAdmin();
+    }
+
+    function isValidBlog(b) {
+      return b.title is string && b.title.size() > 0 &&
+             b.slug is string && b.slug.size() > 0 &&
+             b.content is string && b.content.size() > 0 &&
+             (b.get('date', '') is string);
+    }
+
+    // --- Testimonials ---
+    match /testimonials/{testimonialId} {
+      allow read: if true;
+      allow create, update: if isVerifiedAdmin() && isValidId(testimonialId) && isValidTestimonial(incoming());
+      allow delete: if isVerifiedAdmin();
+    }
+
+    function isValidTestimonial(t) {
+      return t.quote is string && t.author is string;
+    }
+
+    // --- Results ---
+    match /results/{resultId} {
+      allow read: if true;
+      allow create, update: if isVerifiedAdmin() && isValidId(resultId) && isValidResult(incoming());
+      allow delete: if isVerifiedAdmin();
+    }
+
+    function isValidResult(r) {
+      return r.title is string && r.title.size() > 0 &&
+             r.desc is string && r.desc.size() > 0 &&
+             r.img is string &&
+             (r.get('order', 0) is number);
+    }
+
+    // --- Settings ---
+    match /settings/global {
+      allow read: if true;
+      allow create, update: if isVerifiedAdmin() && isValidSettings(incoming());
+    }
+
+    function isValidSettings(s) {
+      return true; // Simplified for now
+    }
+
+    // --- Leads ---
+    match /leads/{leadId} {
+      allow create: if isValidId(leadId) && isValidLead(incoming());
+      allow read, update, delete: if isVerifiedAdmin();
+    }
+
+    function isValidLead(l) {
+      return l.name is string && l.name.size() > 0 &&
+             l.email is string && l.email.size() > 0 &&
+             (l.get('status', 'new') is string);
+    }
+  }
+}

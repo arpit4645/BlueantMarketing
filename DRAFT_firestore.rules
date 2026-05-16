@@ -1,0 +1,103 @@
+rules_version = '2';
+services {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedAdmin() {
+      return isSignedIn() && 
+             request.auth.token.email == 'arpitjadav765@gmail.com' && 
+             request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Projects ---
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if isVerifiedAdmin() && isValidId(projectId) && isValidProject(incoming());
+    }
+
+    function isValidProject(p) {
+      return p.name is string && p.name.size() > 0 && p.name.size() < 200 &&
+             p.cat is string && p.img is string &&
+             (p.get('order', 0) is number);
+    }
+
+    // --- Services ---
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isVerifiedAdmin() && isValidId(serviceId) && isValidService(incoming());
+    }
+
+    function isValidService(s) {
+      return s.title is string && s.title.size() > 0 &&
+             s.num is string &&
+             (s.get('order', 0) is number);
+    }
+
+    // --- Blogs ---
+    match /blogs/{blogId} {
+      allow read: if true;
+      allow create: if isVerifiedAdmin() && isValidId(blogId) && isValidBlog(incoming());
+      allow update: if isVerifiedAdmin() && isValidBlog(incoming());
+      allow delete: if isVerifiedAdmin();
+    }
+
+    function isValidBlog(b) {
+      return b.title is string && b.title.size() > 0 &&
+             b.slug is string && b.slug.size() > 0 &&
+             b.content is string && b.content.size() > 0 &&
+             (b.get('date', '') is string);
+    }
+
+    // --- Testimonials ---
+    match /testimonials/{testimonialId} {
+      allow read: if true;
+      allow write: if isVerifiedAdmin() && isValidId(testimonialId) && isValidTestimonial(incoming());
+    }
+
+    function isValidTestimonial(t) {
+      return t.quote is string && t.author is string;
+    }
+
+    // --- Settings ---
+    match /settings/global {
+      allow read: if true;
+      allow write: if isVerifiedAdmin() && isValidSettings(incoming());
+    }
+
+    function isValidSettings(s) {
+      return true; // Simplified for now, but should check keys
+    }
+
+    // --- Leads ---
+    match /leads/{leadId} {
+      allow create: if isValidId(leadId) && isValidLead(incoming());
+      allow read, update, delete: if isVerifiedAdmin();
+    }
+
+    function isValidLead(l) {
+      return l.name is string && l.name.size() > 0 &&
+             l.email is string && l.email.size() > 0 &&
+             (l.get('status', 'new') is string);
+    }
+  }
+}
