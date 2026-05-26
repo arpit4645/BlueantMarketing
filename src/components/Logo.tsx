@@ -13,7 +13,7 @@ export default function Logo({ className, isScrolled }: LogoProps) {
         src="/logo.png"
         alt="BlueAnt Logo"
         className={cn(
-          "h-10 w-auto transition-all duration-500",
+          "h-16 w-auto transition-all duration-500",
           isScrolled && "brightness-0"
         )}
       />
